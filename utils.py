@@ -26,15 +26,7 @@ class ImageAccessibilityAnalyzer:
         self.output_parser = StrOutputParser()
 
     def _create_analysis_chain(self, system_prompt):
-        """
-        Create a generic analysis chain with flexible prompting
         
-        Args:
-            system_prompt (str): System instruction for the AI
-        
-        Returns:
-            Chain for image analysis
-        """
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt),
             ("user", [
@@ -122,17 +114,7 @@ class ImageAccessibilityAnalyzer:
         })
 
 def process_uploaded_image(analyzer, uploaded_file, analysis_type):
-    """
-    Process the uploaded image using the specified analysis type
     
-    Args:
-        analyzer (ImageAccessibilityAnalyzer): Analysis instance
-        uploaded_file (UploadedFile): Streamlit uploaded file
-        analysis_type (str): Type of analysis to perform
-    
-    Returns:
-        Analysis result
-    """
     # Read the uploaded file
     image_bytes = uploaded_file.getvalue()
     
