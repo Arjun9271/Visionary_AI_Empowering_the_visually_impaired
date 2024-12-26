@@ -166,7 +166,7 @@ def text_to_speech(text, model="aura-zeus-en"):
         
         deepgram = DeepgramClient(DEEPGRAM_API_KEY)
         options = SpeakOptions(model=model)
-        deepgram.speak.v("1").save(filename, {"text": text}, options)
+        deepgram.speak.rest.v("1").save(filename, {"text": text}, options)
         
         return filename
     except Exception as e:
