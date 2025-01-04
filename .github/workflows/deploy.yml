@@ -44,6 +44,13 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+          # env variables
+
+          # Export API keys as environment variables
+          export API_KEY=${{ secrets.API_KEY }}
+          export DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+
+
           # Run Streamlit app
           nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
           EOF
