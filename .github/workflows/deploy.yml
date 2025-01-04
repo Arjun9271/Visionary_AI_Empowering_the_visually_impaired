@@ -21,47 +21,44 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@18.234.236.216 << 'EOF'
-          # Navigate to home directory
-          cd /home/ubuntu
+            # First check if the directory exists and remove it if it does
+            if [ -d "Visionary_AI" ]; then
+              rm -rf Visionary_AI
+            fi
 
-          # Clone repository if not already cloned
-          if [ ! -d "Visionary_AI" ]; then
-            git clone https://github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git Visionary_AI
-          fi
-          
-          cd Visionary_AI || exit 1
+            # Clone using git clone with HTTPS and basic authentication
+            git clone https://Arjun9271:${{ secrets.PAT_TOKEN }}@github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git Visionary_AI
 
-          # Pull latest changes
-          git pull origin master
+            # Verify clone was successful
+            if [ ! -d "Visionary_AI" ]; then
+              echo "Clone failed"
+              exit 1
+            fi
 
-          # Create and activate virtual environment if it doesn't exist
-          if [ ! -d "venv" ]; then
+            cd Visionary_AI
+
+            # Create and activate virtual environment
             python3 -m venv venv
-          fi
-          source venv/bin/activate
+            source venv/bin/activate
 
-          # Install dependencies
-          pip3 install --upgrade pip
-          pip3 install -r requirements.txt
+            # Install dependencies
+            pip3 install --upgrade pip
+            pip3 install -r requirements.txt
 
-          # Export API keys as environment variables
-          export API_KEY=${{ secrets.API_KEY }}
-          export DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+            # Export API keys as environment variables
+            export API_KEY=${{ secrets.API_KEY }}
+            export DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
 
-          # Kill existing Streamlit process if running
-          pkill -f streamlit || true
+            # Kill any existing Streamlit process
+            pkill -f streamlit || true
 
-          # Run Streamlit app
-          nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
+            # Run Streamlit app
+            nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
 
-          # Wait to ensure process starts
-          sleep 5
-
-          # Verify process is running
-          if ! pgrep -f streamlit > /dev/null; then
-            echo "Failed to start Streamlit"
-            exit 1
-          fi
+            # Wait and verify
+            sleep 5
+            if ! pgrep -f streamlit > /dev/null; then
+              echo "Failed to start Streamlit"
+              exit 1
+            fi
           EOF
-
-#
