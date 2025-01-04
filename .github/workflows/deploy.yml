@@ -10,17 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up SSH
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # Step 3: Deploy to EC2
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@18.234.236.216 << 'EOF'
@@ -31,27 +28,38 @@ jobs:
           if [ ! -d "Visionary_AI" ]; then
             git clone https://github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git Visionary_AI
           fi
-          cd Visionary_AI
+          
+          cd Visionary_AI || exit 1
 
           # Pull latest changes
-          git pull
+          git pull origin master
 
-          # Create and activate virtual environment
-          python3 -m venv venv
+          # Create and activate virtual environment if it doesn't exist
+          if [ ! -d "venv" ]; then
+            python3 -m venv venv
+          fi
           source venv/bin/activate
 
           # Install dependencies
           pip3 install --upgrade pip
           pip3 install -r requirements.txt
 
-          # env variables
-
           # Export API keys as environment variables
           export API_KEY=${{ secrets.API_KEY }}
           export DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
 
+          # Kill existing Streamlit process if running
+          pkill -f streamlit || true
 
           # Run Streamlit app
           nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
+
+          # Wait to ensure process starts
+          sleep 5
+
+          # Verify process is running
+          if ! pgrep -f streamlit > /dev/null; then
+            echo "Failed to start Streamlit"
+            exit 1
+          fi
           EOF
-#changed
