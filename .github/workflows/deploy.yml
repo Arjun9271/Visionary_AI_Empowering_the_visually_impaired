@@ -54,3 +54,4 @@ jobs:
           # Run Streamlit app
           nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
           EOF
+#changed
