@@ -3,62 +3,50 @@ name: Deploy Streamlit App to EC2
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Set up SSH
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+      # Step 3: Deploy to EC2
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@18.234.236.216 << 'EOF'
-            # First check if the directory exists and remove it if it does
-            if [ -d "Visionary_AI" ]; then
-              rm -rf Visionary_AI
-            fi
+          ssh -o StrictHostKeyChecking=no ubuntu@<EC2_PUBLIC_IP> << 'EOF'
+          # Navigate to home directory
+          cd /home/ubuntu
 
-            # Clone using git clone with HTTPS and basic authentication
-            git clone https://Arjun9271:${{ secrets.PAT_TOKEN }}@github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git Visionary_AI
+          # Define project folder name
+          PROJECT_NAME="Visionary_AI"
 
-            # Verify clone was successful
-            if [ ! -d "Visionary_AI" ]; then
-              echo "Clone failed"
-              exit 1
-            fi
+          # Clone repository if not already cloned
+          if [ ! -d "$PROJECT_NAME" ]; then
+            git clone https://github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git "$PROJECT_NAME"
+          fi
+          cd "$PROJECT_NAME"
 
-            cd Visionary_AI
+          # Pull latest changes
+          git pull
 
-            # Create and activate virtual environment
-            python3 -m venv venv
-            source venv/bin/activate
+          # Create and activate virtual environment
+          python3 -m venv venv
+          source venv/bin/activate
 
-            # Install dependencies
-            pip3 install --upgrade pip
-            pip3 install -r requirements.txt
+          # Install dependencies with pip3
+          pip3 install --upgrade pip
+          pip3 install -r requirements.txt
 
-            # Export API keys as environment variables
-            export API_KEY=${{ secrets.API_KEY }}
-            export DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
-
-            # Kill any existing Streamlit process
-            pkill -f streamlit || true
-
-            # Run Streamlit app
-            nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
-
-            # Wait and verify
-            sleep 5
-            if ! pgrep -f streamlit > /dev/null; then
-              echo "Failed to start Streamlit"
-              exit 1
-            fi
+          # Run Streamlit app
+          nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
           EOF
