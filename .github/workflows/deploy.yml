@@ -3,7 +3,7 @@ name: Deploy Streamlit App to EC2
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
