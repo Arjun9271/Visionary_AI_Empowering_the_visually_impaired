@@ -1,0 +1,49 @@
+name: Deploy Streamlit App to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up SSH
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      # Step 3: Deploy to EC2
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@18.234.236.216 << 'EOF'
+          # Navigate to home directory
+          cd /home/ubuntu
+
+          # Clone repository if not already cloned
+          if [ ! -d "Visionary_AI" ]; then
+            git clone https://github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired.git Visionary_AI
+          fi
+          cd Visionary_AI
+
+          # Pull latest changes
+          git pull
+
+          # Create and activate virtual environment
+          python3 -m venv venv
+          source venv/bin/activate
+
+          # Install dependencies
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+          # Run Streamlit app
+          nohup ./venv/bin/streamlit run app.py > streamlit.log 2>&1 &
+          EOF
