@@ -32,7 +32,7 @@ jobs:
 
           # Clone repository if not already cloned
           if [ ! -d "$PROJECT_NAME" ]; then
-            git clone https://github.com/Arjun9271/Arjun9271-Visionary_AI-Empowering-the-visually-impaired-.git "$PROJECT_NAME"
+             git clone https://github.com/Arjun9271/Visionary_AI_Empowering_the_visually_impaired.git "$PROJECT_NAME"
           fi
           cd "$PROJECT_NAME"
 
