@@ -12,10 +12,7 @@ api_key = os.getenv("api_key")
 
 
 class ImageAccessibilityAnalyzer:
-    """
-    A comprehensive image analysis utility for accessibility purposes.
-    Provides multiple analysis methods for visually impaired users.
-    """
+  
 
     def __init__(self, model="gemini-1.5-flash"):
        
@@ -24,6 +21,7 @@ class ImageAccessibilityAnalyzer:
             api_key=api_key 
         )
         self.output_parser = StrOutputParser()
+        
 
     def _create_analysis_chain(self, system_prompt):
         
@@ -41,6 +39,7 @@ class ImageAccessibilityAnalyzer:
         return prompt | self.chat_model | self.output_parser
 
     def scene_understanding(self, image_base64):
+        
         """Generate comprehensive scene description"""
         system_prompt = """
         You are an AI assistant helping visually impaired individuals understand visual scenes.

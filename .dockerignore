@@ -1,0 +1,38 @@
+# Ignore Python bytecode files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+env/
+.venv/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Git files
+.git/
+.gitignore
+
+# Ignore Dockerfile and README (if not needed in the image)
+Dockerfile
+README.md
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore any logs
+*.log
+
+# Ignore cache or temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+
+# cicd
+.github
