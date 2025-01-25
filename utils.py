@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key = os.getenv("api_key")
+api_key = os.getenv("API_KEY")
 
 
 class ImageAccessibilityAnalyzer:
