@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key = os.getenv("API_KEY")
+API_KEY = os.environ.get("API_KEY")
+
+os.environ['API_KEY'] = API_KEY
 
 
 class ImageAccessibilityAnalyzer:
@@ -18,7 +20,7 @@ class ImageAccessibilityAnalyzer:
        
         self.chat_model = ChatGoogleGenerativeAI(
             model=model, 
-            api_key=api_key 
+            api_key= API_KEY
         )
         self.output_parser = StrOutputParser()
         

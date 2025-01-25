@@ -9,7 +9,9 @@ import time
 ## will work
 load_dotenv()
 
-DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
+DEEPGRAM_API_KEY = os.environ.get("DEEPGRAM_API_KEY")
+
+os.environ["DEEPGRAM_API_KEY"] = DEEPGRAM_API_KEY
 
 def apply_custom_css():
     st.markdown("""
