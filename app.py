@@ -6,7 +6,7 @@ from utils import ImageAccessibilityAnalyzer, process_uploaded_image
 from dotenv import load_dotenv
 import time
 
-## will work
+
 load_dotenv()
 
 DEEPGRAM_API_KEY = os.environ.get("DEEPGRAM_API_KEY")
